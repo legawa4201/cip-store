@@ -15,7 +15,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const db = await Connection.connect();
   try {
     const { id }: { id: string } = req.query
     switch (req.method) {
@@ -57,7 +56,8 @@ async function getProductDetail(id: number) {
     let db = await Connection.connect()
 
     let query = `
-    SELECT nama, deskripsi, harga, stok FROM produk
+    SELECT p.*, s.nama_suplier FROM produk AS p
+    JOIN suplier AS s ON p.suplier_id = s.id_suplier
     WHERE id = ?;
     `;
 
@@ -67,7 +67,7 @@ async function getProductDetail(id: number) {
   }
 }
 
-async function editProduct({nama, deskripsi, harga, stok}, id: number) {
+async function editProduct({nama, deskripsi, harga, stok, suplier_id}, id: number) {
   try {
     let db = await Connection.connect()
 
@@ -77,11 +77,12 @@ async function editProduct({nama, deskripsi, harga, stok}, id: number) {
     nama = ?,
     deskripsi = ?,
     harga = ?,
-    stok = ?
+    stok = ?,
+    suplier_id = ?
     WHERE id = ?
     `
 
-    return db.run(query, [nama, deskripsi, harga, stok, id])
+    return db.run(query, [nama, deskripsi, harga, stok, suplier_id, id])
   } catch (error) {
     throw error
   }

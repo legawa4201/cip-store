@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "date-fn": "^0.0.2",
     "formidable": "^3.5.1",
     "mime": "^3.0.0",
     "mv": "^2.1.1",

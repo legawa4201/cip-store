@@ -36,15 +36,9 @@ export default async function handler(
 
   try {
     switch (req.method) {
-      case `GET`:
-        const data = await getProducts()
-        res.json(data)
-        break;
       case `POST`:
-        const form = new IncomingForm()
+        const form = new IncomingForm({ maxFileSize: 2 * 1024 * 1024 })
         form.parse(req, function(err, fields, files) {
-          // console.error(err)
-          console.log(fields)
           let file = files.file[0]
 
           const fileExts = [`.png`, `.jpg`, `.jpeg`];
@@ -56,27 +50,20 @@ export default async function handler(
 
           if(!isAllowedExt || !isAllowedMimeType) return res.status(400).json({ message: `Only accept .jpeg, .png, and .jpg files` })
 
+          const newName = `${+(new Date())}` + path.extname(file.originalFilename)
           const initialPath = file.filepath
-          const newPath = `./public/uploads/products/${+(new Date())}` + path.extname(file.originalFilename)
-          console.log(initialPath, newPath)
+          const newPath = `./public/uploads/products/${newName}` 
           mv(initialPath, newPath, function(err) {
             if(err) return res.status(500).json({ message: `Internal Server Error` })
           })
 
-          const newProduct: Product = {
-            ...fields,
-            foto: newPath
-          }
-          addProduct({ ...fields, foto: newPath })
+          addProduct({ ...fields, foto: newName })
           .then(function(response) {
-            console.log(response, `++++++++++++++++++++++++++++++++++++++`)
             res.json({ message: `File Uploaded...` })
           })
           .catch(function(err) {
-            console.error(err, `======================================`)
             unlink(newPath)
             .then(function(response) {
-              console.log(response);
               return res.status(500).json({ message: `Internal Server Error` });
             })
             .catch(function(err) {
@@ -87,42 +74,18 @@ export default async function handler(
         break;
     }
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: `Internal Server Error` });
   }
 }
 
-async function getProducts() {
-  try {
-    const db = await Connection.connect();
-    const products = await db.all(`
-    SELECT p.id, p.nama, p.stok, s.nama_suplier 
-    FROM produk AS p 
-    JOIN suplier AS s
-    ON p.suplier_id = s.id_suplier
-    LIMIT 7
-    OFFSET 0;
-    `)
-
-    const totalProduct = await db.get(`
-    SELECT COUNT(*)
-    FROM produk;
-    `)
-    return { products, totalProduct }
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-async function addProduct({ nama, deskripsi, harga, stok, foto })  {
-  console.log(nama, deskripsi, harga, stok, foto)
+async function addProduct({ nama, deskripsi, harga, stok, foto, suplier_id })  {
   try {
     const db = await Connection.connect()
     let query = `
     INSERT INTO produk(nama, deskripsi, harga, stok, foto, suplier_id)
     VALUES(?, ?, ?, ?, ?, ?)
     `
-    const response = await db.run(query, [nama[0], deskripsi[0], harga[0], stok[0], foto, 1])
+    const response = await db.run(query, [nama[0], deskripsi[0], harga[0], stok[0], foto, suplier_id[0]])
     return response
   } catch (error) {
     throw error

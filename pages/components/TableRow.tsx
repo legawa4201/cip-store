@@ -10,7 +10,7 @@ interface Product {
   foto?: string
 }
 
-export default function TableRow({ product, reFetch, edit }: { product: Product }) {
+export default function TableRow({ product, reFetch, sendId }: { product: Product }) {
 
   async function onDelete(id: number) {
     try {
@@ -25,23 +25,20 @@ export default function TableRow({ product, reFetch, edit }: { product: Product 
       console.error(error)
     }
   }
-  function onEdit(id: number) {
-    edit(id)
+  function onSendId(id: number, isEdit) {
+    sendId(id, isEdit)
   }
 
-  function detail(id: number) {
-    console.log(id)
-  }
   return (
     <tr>
       <td>{product.nama}</td>
       <td>{product.stok}</td>
       <td>{product.nama_suplier}</td>
       <td>
-        <button className="btn" onClick={() => detail(+product.id)}>Detail</button>
+        <label htmlFor="my_modal_7" className="btn" onClick={() => onSendId(+product.id)}>Detail</label>
       </td>
       <td>
-        <button className="btn" onClick={() => onEdit(+product.id)}>Edit</button>
+        <button className="btn" onClick={() => onSendId(+product.id, true)}>Edit</button>
       </td>
       <td>
         <button className="btn" onClick={() => onDelete(+product.id)}>Delete</button>

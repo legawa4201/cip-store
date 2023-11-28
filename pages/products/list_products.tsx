@@ -4,6 +4,7 @@ import SearchBar from "../components/SearchBar";
 import PaginationButton from "../components/PaginationButton";
 import TableRow from "../components/TableRow";
 import ModalForm from "../components/ModalForm";
+import CardDetail from "../components/CardDetail";
 
 interface Product {
   id: string
@@ -16,13 +17,13 @@ interface Product {
 }
 
 export default function ListProducts() {
-  const [isEdit, setIsEdit] = useState(null)
   const [products, setProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1)
   const [totalPage, settotalPage] = useState<number | null>(null);
-
+  const [id, setId] = useState<number | null>(null)
 
   useEffect(function () {
-    fetch(`http://localhost:3000/api/products`)
+    fetch(`http://localhost:3000/api/products/pages/` + currentPage)
       .then(function (response) {
         return response.json()
       })
@@ -34,7 +35,7 @@ export default function ListProducts() {
       .catch(function (error) {
         console.error(error)
       })
-  }, []);
+  }, [currentPage]);
 
   function reFetch(data) {
     const { products: prods, totalProduct } = data
@@ -42,17 +43,35 @@ export default function ListProducts() {
     settotalPage(Math.ceil((totalProduct[`COUNT(*)`] / 7)));
   }
 
-  function edit(id: number) {
-    console.log(id)
-    setIsEdit(id)
-    document.getElementById('my_modal').showModal()
+  function clearId(wantClear) {
+    if(wantClear) setId(null)
   }
 
-  console.log(totalPage)
+  function nextPage(wantNext) {
+    if((currentPage == 1 && !wantNext) || (currentPage == totalPage && wantNext)) return
+    console.log(currentPage, `1`)
+    if(wantNext) {
+      setCurrentPage(currentPage + 1)
+      console.log(currentPage, `2`)
+    } else {
+      console.log(currentPage, `3`)
+      setCurrentPage(currentPage - 1)
+    }
+      
+  }
+
+  function sendId(id: number, isEdit, isAdd ) {
+    setId(id)
+    if(isEdit) {
+      document.getElementById('my_modal').showModal()
+    }
+  }
+
   return (
     <>
       <div className="flex">
-        <ModalForm id={isEdit} reFetch={reFetch} />
+        <CardDetail id={id} clearId={clearId}/>
+        <ModalForm id={id} reFetch={reFetch} clearId={clearId} />
         <div className="w-full">
           <SearchBar />
           <table className="table table-zebra text-center w-full">
@@ -67,16 +86,16 @@ export default function ListProducts() {
             <tbody>
               {
                 products.map(function (prod: Product, i) {
-                  return <TableRow key={i} product={prod} reFetch={reFetch} edit={edit}/>
+                  return <TableRow key={i} product={prod} reFetch={reFetch} sendId={sendId}/>
                 })
               }
             </tbody>
           </table>
           <div className="flex justify-center join">
             <div className="join">
-              <PaginationButton pageState={"<<"} />
-              <PaginationButton pageState={"Page 1 of " + totalPage} />
-              <PaginationButton pageState={">>"} />
+              <PaginationButton nextPage={nextPage} pageState={"<<"} />
+              <PaginationButton pageState={currentPage + " of " + totalPage} />
+              <PaginationButton nextPage={nextPage} pageState={">>"} />
             </div>
           </div>
         </div>
