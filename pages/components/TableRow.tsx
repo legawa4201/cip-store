@@ -10,7 +10,7 @@ interface Product {
   foto?: string
 }
 
-export default function TableRow({ product}: { product: Product }, reFetch) {
+export default function TableRow({ product, reFetch, edit }: { product: Product }) {
 
   async function onDelete(id: number) {
     try {
@@ -18,23 +18,30 @@ export default function TableRow({ product}: { product: Product }, reFetch) {
         method: `DELETE`
       })
       const data = await response.json()
-      console.log(data)
       const responseRefetch = await fetch(`/api/products`)
-      const dataReFetch = await response.json()
-      reFetch(data)
+      const dataReFetch = await responseRefetch.json()
+      reFetch(dataReFetch)
     } catch (error) {
       console.error(error)
     }
-  } return (
+  }
+  function onEdit(id: number) {
+    edit(id)
+  }
+
+  function detail(id: number) {
+    console.log(id)
+  }
+  return (
     <tr>
       <td>{product.nama}</td>
       <td>{product.stok}</td>
       <td>{product.nama_suplier}</td>
       <td>
-        <button className="btn" onClick={() => document.getElementById('my_modal').showModal()}>Detail</button>
+        <button className="btn" onClick={() => detail(+product.id)}>Detail</button>
       </td>
       <td>
-        <button className="btn" onClick={() => document.getElementById('my_modal').showModal()}>Edit</button>
+        <button className="btn" onClick={() => onEdit(+product.id)}>Edit</button>
       </td>
       <td>
         <button className="btn" onClick={() => onDelete(+product.id)}>Delete</button>

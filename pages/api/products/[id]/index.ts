@@ -17,17 +17,19 @@ export default async function handler(
 ) {
   const db = await Connection.connect();
   try {
-    const { id } = req.query
-    console.log(id)
+    const { id }: { id: string } = req.query
     switch (req.method) {
       case `GET`:
+        const responseGET = await getProductDetail(+id)
+        res.json(responseGET)
         break;
       case `DELETE`:
-        const response = await deleteProduk(id)
-        console.log(response)
+        const responseDEL = await deleteProduk(+id)
         res.json({ message: `Products deleted...` })
         break;
       case `PUT`:
+        const responsePut  = await editProduct(req.body, id)
+        res.json(responsePut)
         break;
     }
   } catch (error) {
@@ -55,11 +57,11 @@ async function getProductDetail(id: number) {
     let db = await Connection.connect()
 
     let query = `
-    SELECT * FROM produk
+    SELECT nama, deskripsi, harga, stok FROM produk
     WHERE id = ?;
     `;
 
-    return db.run(query, [id]);
+    return db.get(query, [id]);
   } catch (error) {
     throw error
   }

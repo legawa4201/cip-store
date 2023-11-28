@@ -16,6 +16,7 @@ interface Product {
 }
 
 export default function ListProducts() {
+  const [isEdit, setIsEdit] = useState(null)
   const [products, setProducts] = useState([]);
   const [totalPage, settotalPage] = useState<number | null>(null);
 
@@ -36,16 +37,22 @@ export default function ListProducts() {
   }, []);
 
   function reFetch(data) {
-    const { prods, totalProduct } = data
+    const { products: prods, totalProduct } = data
     setProducts(prods);
     settotalPage(Math.ceil((totalProduct[`COUNT(*)`] / 7)));
+  }
+
+  function edit(id: number) {
+    console.log(id)
+    setIsEdit(id)
+    document.getElementById('my_modal').showModal()
   }
 
   console.log(totalPage)
   return (
     <>
       <div className="flex">
-        <ModalForm />
+        <ModalForm id={isEdit} reFetch={reFetch} />
         <div className="w-full">
           <SearchBar />
           <table className="table table-zebra text-center w-full">
@@ -60,7 +67,7 @@ export default function ListProducts() {
             <tbody>
               {
                 products.map(function (prod: Product, i) {
-                  return <TableRow key={i} product={prod} />
+                  return <TableRow key={i} product={prod} reFetch={reFetch} edit={edit}/>
                 })
               }
             </tbody>
