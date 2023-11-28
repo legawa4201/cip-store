@@ -27,6 +27,7 @@ export default function ListProducts() {
         return response.json()
       })
       .then(function ({ products: prod, totalProduct }) {
+        console.log(prod, totalProduct)
         setProducts(prod)
         let pages = Math.ceil((totalProduct[`COUNT(*)`] / 7))
         settotalPage(pages)
