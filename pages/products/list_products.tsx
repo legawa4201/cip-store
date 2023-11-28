@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import SearchBar from "../components/SearchBar";
 import PaginationButton from "../components/PaginationButton";
 import TableRow from "../components/TableRow";
+import ModalForm from "../components/ModalForm";
 
 interface Product {
   id: string
@@ -38,6 +39,7 @@ export default function ListProducts() {
   return (
     <>
       <div className="flex">
+        <ModalForm />
         <div className="w-full">
           <SearchBar />
           <table className="table table-zebra text-center w-full">
@@ -60,7 +62,7 @@ export default function ListProducts() {
           <div className="flex justify-center join">
             <div className="join">
               <PaginationButton pageState={"<<"} />
-              <PaginationButton pageState={"Page 1"} />
+              <PaginationButton pageState={"Page 1 of " + totalPage} />
               <PaginationButton pageState={">>"} />
             </div>
           </div>

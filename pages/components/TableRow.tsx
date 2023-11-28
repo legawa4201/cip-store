@@ -17,13 +17,13 @@ export default function TableRow({ product }: { product: Product }) {
             <td>{product.stok}</td>
             <td>{product.nama_suplier}</td>
             <td>
-            <Link href={`/`} className="btn">Detail</Link>
+            <button  className="btn" onClick={() => document.getElementById('my_modal').showModal()}>Detail</button>
             </td>
             <td>
-            <Link href={`/`} className="btn">Edit</Link>
+            <button  className="btn" onClick={() => document.getElementById('my_modal').showModal()}>Edit</button>
             </td>
             <td>
-            <Link href={`/`} className="btn">Delete</Link>
+            <button  className="btn" onClick={() => document.getElementById('my_modal').showModal()}>Delete</button>
             </td>
       </tr>
     )
