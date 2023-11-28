@@ -23,7 +23,6 @@ export default function ModalForm({ id, reFetch }: { id: number }) {
             })
             .then(function(data) {
                 setInput({...data})
-                console.log(data)
             })
             .catch(function(err) {
                 console.error(err)
@@ -40,7 +39,6 @@ export default function ModalForm({ id, reFetch }: { id: number }) {
                 body: JSON.stringify(input)
             })
             .then(function(response) {
-                console.log(response, `=================================`)
                 return response.json()
             })
             .then(function(res) {
@@ -50,7 +48,6 @@ export default function ModalForm({ id, reFetch }: { id: number }) {
                 return reFetchRes.json()
             })
             .then(function(data) {
-                console.log(data)
                 reFetch(data)
                 document.getElementById('my_modal').close()
             })
@@ -63,14 +60,12 @@ export default function ModalForm({ id, reFetch }: { id: number }) {
             for(const key in input) {
                 form.append(key, input[key])
             }
-            console.log(form)
             fetch(`/api/products`, {
                 method: `POST`,
                 body: form
             })
             .then(function(response) {
                 document.getElementById('my_modal').close()
-                console.log(response)
             })
             .catch(function(err) {  
                 console.error(err)
