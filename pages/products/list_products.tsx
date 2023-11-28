@@ -35,6 +35,12 @@ export default function ListProducts() {
       })
   }, []);
 
+  function reFetch(data) {
+    const { prods, totalProduct } = data
+    setProducts(prods);
+    settotalPage(Math.ceil((totalProduct[`COUNT(*)`] / 7)));
+  }
+
   console.log(totalPage)
   return (
     <>
