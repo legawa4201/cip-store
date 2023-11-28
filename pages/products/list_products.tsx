@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import SearchBar from "../components/SearchBar";
 import PaginationButton from "../components/PaginationButton";
@@ -43,34 +42,35 @@ export default function ListProducts() {
     settotalPage(Math.ceil((totalProduct[`COUNT(*)`] / 7)));
   }
 
-  function clearId(wantClear) {
-    if(wantClear) setId(null)
+  function clearId(wantClear: boolean) {
+    if (wantClear) setId(null)
   }
 
-  function nextPage(wantNext) {
-    if((currentPage == 1 && !wantNext) || (currentPage == totalPage && wantNext)) return
+  function nextPage(wantNext: boolean) {
+    if ((currentPage == 1 && !wantNext) || (currentPage == totalPage && wantNext)) return
     console.log(currentPage, `1`)
-    if(wantNext) {
+    if (wantNext) {
       setCurrentPage(currentPage + 1)
       console.log(currentPage, `2`)
     } else {
       console.log(currentPage, `3`)
       setCurrentPage(currentPage - 1)
     }
-      
+
   }
 
-  function sendId(id: number, isEdit, isAdd ) {
+  function sendId(id: number, isEdit: boolean, isAdd: boolean) {
     setId(id)
-    if(isEdit) {
-      document.getElementById('my_modal').showModal()
+    if (isEdit) {
+      const modalFrom = document.getElementById('my_modal') as HTMLDialogElement
+      modalFrom.showModal()
     }
   }
 
   return (
     <>
       <div className="flex">
-        <CardDetail id={id} clearId={clearId}/>
+        <CardDetail id={id} clearId={clearId} />
         <ModalForm id={id} reFetch={reFetch} clearId={clearId} />
         <div className="w-full">
           <SearchBar />
@@ -86,7 +86,7 @@ export default function ListProducts() {
             <tbody>
               {
                 products.map(function (prod: Product, i) {
-                  return <TableRow key={i} product={prod} reFetch={reFetch} sendId={sendId}/>
+                  return <TableRow key={i} product={prod} reFetch={reFetch} sendId={sendId} />
                 })
               }
             </tbody>
@@ -94,7 +94,7 @@ export default function ListProducts() {
           <div className="flex justify-center join">
             <div className="join">
               <PaginationButton nextPage={nextPage} pageState={"<<"} />
-              <PaginationButton pageState={currentPage + " of " + totalPage} />
+              <button className="join-item btn">{currentPage + ` of ` + totalPage}</button>
               <PaginationButton nextPage={nextPage} pageState={">>"} />
             </div>
           </div>

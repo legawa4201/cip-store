@@ -10,7 +10,7 @@ interface Product {
   foto?: string
 }
 
-export default function TableRow({ product, reFetch, sendId }: { product: Product }) {
+export default function TableRow({ product, reFetch, sendId }: { product: Product, reFetch: (data: Product) => void, sendId: (id: number | string, isEdit: boolean) => void }) {
 
   async function onDelete(id: number) {
     try {
@@ -18,14 +18,14 @@ export default function TableRow({ product, reFetch, sendId }: { product: Produc
         method: `DELETE`
       })
       const data = await response.json()
-      const responseRefetch = await fetch(`/api/products`)
+      const responseRefetch = await fetch(`/api/products/pages/1`)
       const dataReFetch = await responseRefetch.json()
       reFetch(dataReFetch)
     } catch (error) {
       console.error(error)
     }
   }
-  function onSendId(id: number, isEdit) {
+  function onSendId(id: number, isEdit: boolean) {
     sendId(id, isEdit)
   }
 
@@ -35,7 +35,7 @@ export default function TableRow({ product, reFetch, sendId }: { product: Produc
       <td>{product.stok}</td>
       <td>{product.nama_suplier}</td>
       <td>
-        <label htmlFor="my_modal_7" className="btn" onClick={() => onSendId(+product.id)}>Detail</label>
+        <label htmlFor="my_modal_7" className="btn" onClick={() => onSendId(+product.id, false)}>Detail</label>
       </td>
       <td>
         <button className="btn" onClick={() => onSendId(+product.id, true)}>Edit</button>

@@ -1,7 +1,7 @@
 import Image from "next/image"
 import { useEffect, useState } from "react"
 
-export default function CardDetail({ id, clearId }: { id: number | null }) {
+export default function CardDetail({ id, clearId }: { id: number | null, clearId: (wantClear: boolean) => void }) {
     const [product, setProduct] = useState(null)
 
     useEffect(function () {

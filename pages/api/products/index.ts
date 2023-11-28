@@ -1,13 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-import mime from "mime";
-
-import { IncomingForm } from "formidable"
+import { IncomingForm, Fields, Files, File } from "formidable"
 import mv from "mv"
 
 import path, { join } from 'path';
 import { unlink } from 'fs/promises';
-import * as dateFn from "date-fn";
 
 import Connection from '@/database/connection';
 
@@ -19,14 +16,14 @@ export const config = {
   }
 }
 
-interface Product {
-  id: string
-  nama: string
-  nama_suplier: string
-  deskripsi: string
-  stok: number
-  harga: number
-  foto: string
+type ProductForm = {
+  nama: string[]
+  nama_suplier?: string[]
+  deskripsi?: string[]
+  stok?: number[]
+  harga?: number[]
+  foto?: string[]
+  suplier_id: number[]
 }
 
 export default async function handler(
@@ -38,7 +35,7 @@ export default async function handler(
     switch (req.method) {
       case `POST`:
         const form = new IncomingForm({ maxFileSize: 2 * 1024 * 1024 })
-        form.parse(req, function(err, fields, files) {
+        form.parse(req, function(err, fields, files: Files) {
           let file = files.file[0]
 
           const fileExts = [`.png`, `.jpg`, `.jpeg`];
@@ -78,7 +75,7 @@ export default async function handler(
   }
 }
 
-async function addProduct({ nama, deskripsi, harga, stok, foto, suplier_id })  {
+async function addProduct({ nama, deskripsi, harga, stok, foto, suplier_id }: ProductForm)  {
   try {
     const db = await Connection.connect()
     let query = `

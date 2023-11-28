@@ -1,19 +1,18 @@
-import { useEffect, useState } from "react"
+import { ChangeEvent, FormEvent, useEffect, useState } from "react"
 
-export default function ModalForm({ id, reFetch, clearId }: { id: number | null }) {
-    const [input, setInput] = useState({ nama: ``, deskripsi: ``, harga: 0, stok: 0, suplier_id: 0 });
+export default function ModalForm({ id, reFetch, clearId }: { id: number | null, reFetch: (data: object[]) => void, clearId: (wanttClear: boolean) => void }) {
+    const [input, setInput] = useState({ nama: ``, deskripsi: ``, harga: 0, stok: 0, suplier_id: 1 });
     const [image, setImage] = useState(null);
     const [suplier, setSuplier] = useState([])
 
-
-    function onChangeInput({ target }) {
-        const { name, value } = target
+    function onChangeInput(e: ChangeEvent<HTMLFormElement>) {
+        const { name, value } = e.target
         console.log(name, value)
         setInput({ ...input, [name]: value })
     }
 
-    function onChangeFile({ target }) {
-        const { files } = target
+    function onChangeFile(e: ChangeEvent<HTMLFormElement>) {
+        const { files } = e.target
         setImage(files[0])
     }
 
@@ -47,7 +46,8 @@ export default function ModalForm({ id, reFetch, clearId }: { id: number | null 
                 nama: ``,
                 deskripsi: ``,
                 harga: 0,
-                stok: 0
+                stok: 0,
+                suplier_id: 1
             })
         }
     }, [id])
@@ -60,19 +60,20 @@ export default function ModalForm({ id, reFetch, clearId }: { id: number | null 
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(input)
             })
-                .then(function(response) {
+                .then(function (response) {
                     return response.json()
                 })
-                .then(function(res) {
+                .then(function (res) {
                     return fetch(`/api/products/pages/1`)
                 })
-                .then(function(reFetchRes) {
+                .then(function (reFetchRes) {
                     return reFetchRes.json()
                 })
-                .then(function(data) {
+                .then(function (data) {
                     console.log(data)
                     reFetch(data)
-                    document.getElementById('my_modal').close()
+                    const modal = document.getElementById('my_modal') as HTMLDialogElement
+                    modal.close()
                 })
                 .catch(function (err) {
                     console.error(err);
@@ -88,15 +89,16 @@ export default function ModalForm({ id, reFetch, clearId }: { id: number | null 
                 method: `POST`,
                 body: form
             })
-                .then(function(response) {
+                .then(function (response) {
                     return fetch(`/api/products/pages/1`)
                 })
-                .then(function(response) {
+                .then(function (response) {
                     return response.json()
                 })
-                .then(function(data) {
+                .then(function (data) {
                     reFetch(data)
-                    document.getElementById('my_modal').close()
+                    const modals = document.getElementById('my_modal') as HTMLDialogElement
+                    modals.close()
                 })
                 .catch(function (err) {
                     console.error(err)

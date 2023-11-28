@@ -22,9 +22,8 @@ export default async function handler(
     try {
         const data = await fs.readFile(`database/mock_data.json`, `utf-8`);
         const values = JSON.parse(data).map(function(prod: RawData) {
-            return `('${prod.nama}', '${prod.deskripsi}', '${prod.harga}', '${prod.stok}', 'stock_photo.png', '${prod.suplier_id}')`
+            return `('${prod.nama}', '${prod.deskripsi}', '${prod.harga * 100}', '${prod.stok}', 'stock_photo.png', '${prod.suplier_id}')`
         }).join()
-        console.log(values)
         const db = await Connection.connect(); 
         db.exec(`
         INSERT INTO produk(nama, deskripsi, harga, stok, foto, suplier_id)
